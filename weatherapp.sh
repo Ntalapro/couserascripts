@@ -8,7 +8,7 @@ echo "The current Temperature of $city: $obs_temp"
 
 # To extract the forecast tempearature for noon tomorrow
 fc_temp=$(curl -s wttr.in/$city?T | head -23 | tail -1 | grep '°.' | cut -d 'C' -f2 | grep -Eo -e '-?[[:digit:]].*')
-echo "The forecasted temperature for noon tomorrow for $city : $fc_tempC"
+echo "The forecasted temperature for noon tomorrow for $city : $fc_temp C"
 
 hour=$(TZ='Morocco/Casablanca' date -u +%H) 
 day=$(TZ='Morocco/Casablanca' date -u +%d) 
