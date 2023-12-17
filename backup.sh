@@ -2,22 +2,20 @@
 
 # This checks if the number of arguments is correct
 # If the number of arguments is incorrect ( $# != 2) print error message and exit
-if [[ $# != 2 ]]
-then
+if [[ $# != 2 ]]; then
   echo "backup.sh target_directory_name destination_directory_name"
   exit
 fi
 
 # This checks if argument 1 and argument 2 are valid directory paths
-if [[ ! -d "$1" ]] || [[ ! -d "$2" ]]
-then
+if [[ ! -d "$1" ]] || [[ ! -d "$2" ]]; then
   echo "Invalid directory path provided"
   exit
 fi
 
 # [TASK 1]
-targetDirectory= $1
-destinationDirectory= $2
+targetDirectory=$(readlink -f "$1")
+destinationDirectory=$(readlink -f "$2")
 
 # [TASK 2]
 echo "targetDirectory: $targetDirectory"
@@ -46,7 +44,7 @@ destDirAbsPath=$(readlink -f "$destinationDirectory")
 cd "$targetDirectory" || exit
 
 # [TASK 8]
-yesterdayTS= $((currentTS - 24 * 60 * 60))
+yesterdayTS=$((currentTS - 24 * 60 * 60))
 
 declare -a toBackup
 
@@ -60,15 +58,16 @@ do
   fi
 done
 
+
 # [TASK 12]
 # Check if there are files to backup before attempting to create the archive
 if [ ${#toBackup[@]} -gt 0 ]; then
   # Compress and archive files listed in the $toBackup array
-  tar czf "$destinationDirectory/$backupFileName" -C "$targetDirectory"
+  tar czf "$destinationDirectory/$backupFileName" -C "$targetDirectory" "${toBackup[@]}"
   
   # [TASK 13]
   # Move the backup file to the destination directory
-  mv "$backupFileName" "$destinationDirectory/"
+  mv "$destinationDirectory/$backupFileName" "$destinationDirectory/"
   
   echo "Backup completed: $destinationDirectory/$backupFileName"
 else
