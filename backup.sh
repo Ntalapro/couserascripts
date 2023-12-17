@@ -9,7 +9,7 @@ then
 fi
 
 # This checks if argument 1 and argument 2 are valid directory paths
-if [[ ! -d $1 ]] || [[ ! -d $2 ]]
+if [[ ! -d "$1" ]] || [[ ! -d "$2" ]]
 then
   echo "Invalid directory path provided"
   exit
@@ -40,12 +40,10 @@ backupFileName="backup-${currentTS}.tar.gz"
 origAbsPath=$(pwd)
 
 # [TASK 6]
-cd # <-
 destDirAbsPath=$(readlink -f "$destinationDirectory")
 
 # [TASK 7]
-cd "$origAbsPath"
-cd "$targetDirectory"
+cd "$targetDirectory" || exit
 
 # [TASK 8]
 yesterdayTS= $((currentTS - 24 * 60 * 60))
@@ -55,15 +53,24 @@ declare -a toBackup
 for file in $(ls) # [TASK 9]
 do
   # [TASK 10]
-  if ((`date -r $file +%s` > $yesterdayTS))
+  if (( $(date -r "$file" +%s) > yesterdayTS ))
   then
     # [TASK 11]
-    toBackup+=($file)
+    toBackup+=("$file")
   fi
 done
 
 # [TASK 12]
-tar czf "$destDirAbsPath/$backupFileName" "${toBackup[@]}"
-# [TASK 13]
-mv "$backupFileName" "$destDirAbsPath/"
-# Congratulations! You completed the final project for this course!
+# Check if there are files to backup before attempting to create the archive
+if [ ${#toBackup[@]} -gt 0 ]; then
+  # Compress and archive files listed in the $toBackup array
+  tar czf "$destinationDirectory/$backupFileName" -C "$targetDirectory"
+  
+  # [TASK 13]
+  # Move the backup file to the destination directory
+  mv "$backupFileName" "$destinationDirectory/"
+  
+  echo "Backup completed: $destinationDirectory/$backupFileName"
+else
+  echo "No files to backup."
+fi
