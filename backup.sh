@@ -24,10 +24,10 @@ echo "targetDirectory: $targetDirectory"
 echo "destinationDirectory: $destinationDirectory"
 
 # [TASK 3]
-currentTS=``
+currentTS=$(date +%s)
 
 # [TASK 4]
-backupFileName=""
+backupFileName="backup-${currentTS}.tar.gz"
 
 # We're going to:
   # 1: Go into the target directory
@@ -37,11 +37,11 @@ backupFileName=""
 # To make things easier, we will define some useful variables...
 
 # [TASK 5]
-origAbsPath=``
+origAbsPath=$(pwd)
 
 # [TASK 6]
 cd # <-
-destDirAbsPath=``
+destDirAbsPath=$(readlink -f "$destinationDirectory")
 
 # [TASK 7]
 cd # <-
