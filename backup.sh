@@ -16,12 +16,12 @@ then
 fi
 
 # [TASK 1]
-targetDirectory=
-destinationDirectory=
+targetDirectory= $1
+destinationDirectory= $2
 
 # [TASK 2]
-echo ""
-echo ""
+echo "targetDirectory: $targetDirectory"
+echo "destinationDirectory: $destinationDirectory"
 
 # [TASK 3]
 currentTS=``
