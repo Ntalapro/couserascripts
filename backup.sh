@@ -14,8 +14,8 @@ if [[ ! -d "$1" ]] || [[ ! -d "$2" ]]; then
 fi
 
 # [TASK 1]
-targetDirectory=$(readlink -f "$1")
-destinationDirectory=$(readlink -f "$2")
+targetDirectory=$1
+destinationDirectory=$2
 
 # [TASK 2]
 echo "targetDirectory: $targetDirectory"
@@ -25,7 +25,7 @@ echo "destinationDirectory: $destinationDirectory"
 currentTS=$(date +%s)
 
 # [TASK 4]
-backupFileName="backup-${currentTS}.tar.gz"
+backupFileName="backup-$currentTS.tar.gz"
 
 # We're going to:
   # 1: Go into the target directory
@@ -38,10 +38,12 @@ backupFileName="backup-${currentTS}.tar.gz"
 origAbsPath=$(pwd)
 
 # [TASK 6]
-destDirAbsPath=$(readlink -f "$destinationDirectory")
+cd $destinationDirectory # <-
+destDirAbsPath=$(pwd)
 
 # [TASK 7]
-cd "$targetDirectory" || exit
+cd $origAbsPath
+cd $targetDirectory 
 
 # [TASK 8]
 yesterdayTS=$((currentTS - 24 * 60 * 60))
@@ -51,25 +53,16 @@ declare -a toBackup
 for file in $(ls) # [TASK 9]
 do
   # [TASK 10]
-  if (( $(date -r "$file" +%s) > yesterdayTS ))
+  if (( $(date -r $file +%s) > yesterdayTS ))
   then
     # [TASK 11]
-    toBackup+=("$file")
+    toBackup+=($file)
   fi
 done
 
 
 # [TASK 12]
-# Check if there are files to backup before attempting to create the archive
-if [ ${#toBackup[@]} -gt 0 ]; then
-  # Compress and archive files listed in the $toBackup array
-  tar czf "$destinationDirectory/$backupFileName" -C "$targetDirectory" "${toBackup[@]}"
+tar czf $backupFileName  ${toBackup[@]}
   
-  # [TASK 13]
-  # Move the backup file to the destination directory
-  mv "$destinationDirectory/$backupFileName" "$destinationDirectory/"
-  
-  echo "Backup completed: $destinationDirectory/$backupFileName"
-else
-  echo "No files to backup."
-fi
+# [TASK 13]
+mv $backupFileName $destDirAbsPath
